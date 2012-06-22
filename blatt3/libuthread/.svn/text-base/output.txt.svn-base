@@ -1,0 +1,110 @@
+Main: Starte ersten Thread!
+Hallo Welt, hier ist der Thread "Init". Mein Handle ist: 0xbfca2300
+Init: Blockiere ein paar mal... noch gibt es keine anderen Threads
+Init: Erzeuge Threads 1 bis 3
+Thread 1: Handle 0xbfca331c
+Thread 2: Handle 0xbfca4338
+Thread 3: Handle 0xbfca5354
+Init: Blockiere ein paar mal... Threads 1 bis 3 sollten laufen
+Hallo Welt, hier ist der Thread "1". Mein Handle ist: 0xbfca331c
+1 blockiert jetzt
+Hallo Welt, hier ist der Thread "2". Mein Handle ist: 0xbfca4338
+2 blockiert jetzt
+Hallo Welt, hier ist der Thread "3". Mein Handle ist: 0xbfca5354
+3 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+Init: Erzeuge Thread 4
+Init: Blockiere ein paar mal... Alle Threads sollten laufen
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+Hallo Welt, hier ist der Thread "4". Mein Handle ist: 0xbfca6370
+4 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+4 wieder aktiv
+4 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+4 wieder aktiv
+4 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+4 wieder aktiv
+4 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+3 blockiert jetzt
+4 wieder aktiv
+4 blockiert jetzt
+Init: Lasse Threads 3 und 4 terminieren
+Init: Blockiere ein paar mal... Threads 1 und 2 sollten laufen, 3 und 4 sollten terminieren
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+3 wieder aktiv
+Hier ist der Thread "3". Beende mich jetzt...
+4 wieder aktiv
+Hier ist der Thread "4". Beende mich jetzt...
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+1 wieder aktiv
+1 blockiert jetzt
+2 wieder aktiv
+2 blockiert jetzt
+Init: Beende Threads 1 und 2
+Init: Blockiere ein paar mal... es gibt keine anderen Threads mehr
+Init: Beende mich selbst -> Terminiere Thread-System
+Main: Thread-System beendet!

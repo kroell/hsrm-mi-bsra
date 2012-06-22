@@ -1,0 +1,100 @@
+################################################################################
+#
+#	Tino Landmann, Sören Kröll, Christian Caspers, David Gens
+#	Prof. Kaiser - BSRA - Gruppe A - Blatt 3
+#
+################################################################################
+
+
+
+A3.1a) Kommentare, die mit /** beginnen, werden von dem Tool doxygen automatisch
+       als Dokumentation für die unmittelbar darauffolgen Codezeilen 
+       interpretiert. Es werden dann HTML und MANPAGES generiert. Es stehen 
+       verschiedene Tags (z.B. @brief) innerhalb der Kommentare zur Verfügung,
+       um bestimmte Formatierungen vorzunehmen.
+       Einzeilige Kommentare und solche, die mit /* beginnen werden vom Tool
+       ignoriert.
+
+A3.1b) Ok.
+
+A3.1c) Ok.
+
+A3.1d) Bei kooperativem Multithreading wechseln die nebenläufigen Threads 
+       selbstständig zum nächsten Thread, geben also zu Gunsten eines anderen
+       Threads ihren eigenen Laufzeitraum wieder frei (daher kooperativ). Bei
+       präemptivem Multithreading läuft ein Thread prinzipiell unendlich. Die
+       Threads werden aber von einer regulierenden Instanz (z.B. Betriebssystem)
+       in regelmäßigen Abständen abwechselnd schlafen gelegt und aufgeweckt.
+
+A3.2a) Multitasking bezeichnet den nebenläufigen Ablauf mehrerer Prozesse durch
+       einen Prozessor. Die Prozesse haben jeweils einen eigenen Adressraum.
+       Unter Multithreading versteht man den nebenläufigen Ablauf mehrerer
+       Stränge innerhalb eines Prozesses. Diese Threads teilen den gemeinsamen
+       Adressraum des zugehörigen Prozesskontextes. Innerhalb dessen haben sie
+       einen eigenen Stack, auf dem sie Daten ablegen können.
+
+A3.2b) Prinzipiell wird ein Thread durch seinen Status (aktiv/inaktiv), seine
+       Variablen und seinen Prozessorkontext repräsentiert. Dies entspricht
+       der Struktur struct thread.
+
+A3.2c) Indem z.B. ein Array von Thread-Strukturen (struct thread) deklariert
+       wird. Der Speicherbereich dieses Arrays wird dann von den einzelnen
+       Threads genutzt.
+
+A3.2d) $>./main > myoutput.txt
+       $> diff myoutput.txt output.txt 
+       2c2
+       < Hallo Welt, hier ist der Thread "Init". Mein Handle ist: 0x7fff7cd6aef0
+       ---
+       > Hallo Welt, hier ist der Thread "Init". Mein Handle ist: 0xbfca2300
+       5,7c5,7
+       < Thread 1: Handle 0x7fff7cd6bf38
+       < Thread 2: Handle 0x7fff7cd6cf80
+       < Thread 3: Handle 0x7fff7cd6dfc8
+       ---
+       > Thread 1: Handle 0xbfca331c
+       > Thread 2: Handle 0xbfca4338
+       > Thread 3: Handle 0xbfca5354
+       9c9
+       < Hallo Welt, hier ist der Thread "1". Mein Handle ist: 0x7fff7cd6bf38
+       ---
+       > Hallo Welt, hier ist der Thread "1". Mein Handle ist: 0xbfca331c
+       11c11
+       < Hallo Welt, hier ist der Thread "2". Mein Handle ist: 0x7fff7cd6cf80
+       ---
+       > Hallo Welt, hier ist der Thread "2". Mein Handle ist: 0xbfca4338
+       13c13
+       < Hallo Welt, hier ist der Thread "3". Mein Handle ist: 0x7fff7cd6dfc8
+       ---
+       > Hallo Welt, hier ist der Thread "3". Mein Handle ist: 0xbfca5354
+       47c47
+       < Hallo Welt, hier ist der Thread "4". Mein Handle ist: 0x7fff7cd6f010
+       ---
+       > Hallo Welt, hier ist der Thread "4". Mein Handle ist: 0xbfca6370
+
+
+A3.3a) Das makro uth_suicide() steht für den Funktionsaufruf 
+       uth_thread_terminate(uth_get_handle()). uth_get_handle() gibt einen Zeiger
+       auf den aktuellen Thread zurück. uth_thread_terminate() verlangt diesen Zeiger
+       um die Threadstruktur als frei zu markieren, und den Kontext des nächsten
+       Threads durch Aufruf von __longjmp() wiederherzustellen. 
+       
+       Wenn sich der Thread nicht durch Aufruf von uth_suicide() beendet, findet auch 
+       kein Thread-Wechsel beim Beenden des Threads statt, da kein Aufruf
+       von __longjmp() erfolgt der den Kontext des nächsten Threads wiederherstellen würde. 
+       Das kann zu einem Speicherzugriffsfehler führen, da die Thread-Funktion zu der 
+       Adresse zurückkehrt, die am Ende des Thread-Stacks steht (dorthin zeigt der PC). 
+       Da nicht garantiert wird, was im Thread-Stack steht, ist auch das Verhalten des 
+       Rücksprungs undefiniert.
+       
+
+A3.3b) Siehe Quellcode uth.c - static int suicide() wird mit gesetztem
+       AUTO_TERMINATE Flag in uth_thread_create() auf den Stack des erstellten
+       Threads gepusht
+
+A3.3c) Präemptives Multithreading bedeutet, dass die Threads im laufenden 
+       Prozess die Zeiteinheiten entzogen bekommen. Dafür müsste z.B. im 
+       Initthread ein Scheduler in bestimmten Taktzyklen automatisch die Threads
+       umschalten. Wenn alle Threads terminiert sind, müsste dann der 
+       Prozesskontext freigegeben werden. Der Scheduler müsste dann auch dafür
+       sorgen, die Threadkontexte beim Umschalten zu sichern.
