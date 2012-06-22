@@ -1,0 +1,5 @@
+IN 0, R1
+IN 0, R2
+ADD R1, R2, R3
+OUT R3,0
+HALT

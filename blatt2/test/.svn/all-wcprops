@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/2012bs/2012bs03/!svn/ver/2/blatt2/test
+END
+hellomoco.asm
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/2012bs/2012bs03/!svn/ver/1/blatt2/test/hellomoco.asm
+END
+a2.1a.asm
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/2012bs/2012bs03/!svn/ver/1/blatt2/test/a2.1a.asm
+END
+a2.3b_testPP.asm
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/2012bs/2012bs03/!svn/ver/1/blatt2/test/a2.3b_testPP.asm
+END
+a2.3c_testJSR.asm
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/2012bs/2012bs03/!svn/ver/1/blatt2/test/a2.3c_testJSR.asm
+END
+a2.3a_testByte.asm
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/2012bs/2012bs03/!svn/ver/1/blatt2/test/a2.3a_testByte.asm
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/2012bs/2012bs03/!svn/ver/2/blatt2/test/Makefile
+END
+a2.3a_testWord.asm
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/2012bs/2012bs03/!svn/ver/1/blatt2/test/a2.3a_testWord.asm
+END
