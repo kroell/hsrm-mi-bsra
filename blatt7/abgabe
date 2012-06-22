@@ -1,0 +1,63 @@
+################################################################################
+#
+#	Tino Landmann, Sören Kröll, Christian Caspers, David Gens
+#	Prof. Kaiser - BSRA - Gruppe A - Blatt 7
+#
+################################################################################
+
+A7.1 a) Die Problemstellung besteht dann, wenn mehrere Prozesse auf ein 
+        gemeinsames Betriebsmittel (Datei, Drucker..) zugreifen. Man nennt die
+	Prozesse dann abhängig und Situationen in denen der Ausgang von der 
+	Ablaufreihenfolge abhängt Race Conditions. Ein Abschnitt im Programm mit
+	Zugriffen auf das gemeinsame Betriebsmittel heißt Critical Section. Das
+	Problem des niederbayerischen Fischverwahrungsunternehmens ist als das
+	"Leser-Schreiber-Problem" bekannt. Mehrere Prozesse sollen gleichzeitig
+	auf dem Datenbestand lesen dürfen, es darf aber immer nur genau einen
+	Schreiber geben und gleichzeitiges Lesen und Schreiben ist verboten.
+
+A7.1 b) Neu vorgenommener Eintrag verschwindet:
+          - ein Schreiber möchte einen neuen Eintrag anlegen
+	  - ein zweiter Schreiber möchte eine Rechnung für einen Kunden drucken
+	  - Konflikt: Der erste Schreiber bekommt einen Filedeskriptor um seinen
+	    Eintrag an die Datei anzuhängen (O_APPEND). Der zweite Schreiber
+	    benennt die Datei nun in eine temporäre Datei um. Der erste Schreiber
+	    hängt seinen Eintrag an die nun nicht existente Datei an, legt also
+	    einen ersten Eintrag an. Der zweite Schreiber liest alle Datensätze
+	    aus der temporären Datei und schreibt diese in die seiner Meinung nach
+	    nicht existente Datendatei, womit er den neuen Eintrag vom ersten
+	    Schreiber überschreibt, dessen Eintrag ist verloren gegangen.
+
+     	Preisaufschlag geht verloren:
+	  - zwei Schreiber möchten kurz hintereinander eine Erhöhung für den
+	    selben Kunden vornehmen
+	  - Konflikt: Beide lesen die Datei Datensatzweise ein. Ist der erste
+	    Schreiber beim gewünschten Kunden angelangt, liest er dessen Daten-
+	    sätze in eine struct ein, erhöht den Betrag und schreibt die struct
+	    zurück. Der zweite Schreiber liest die Datenbestände aber immer kurz
+	    bevor der erste seine Erhöhung geschrieben hat. Er liest also den 
+	    alten Stand, erhöht diesen und überschreibt mit seiner Änderung den
+	    zwischenzeitlich geänderten Betrag vom ersten Schreiber, dessen
+	    Erhöhung ist verloren gegangen.
+
+	Datenbank korrumpiert:
+	  - ein Schreiber legt einen neuen Eintrag an
+	  - zwei Millisekunden später löscht ein weiterer Schreiber einen alten
+	    Eintrag aus dem Datenbestand
+	  - Konflikt: Beide Schreiber greifen auf die Datei zu, der Zweite
+	    benennt sogar die Datei in eine temporäre Datei um. Das kann zu einem
+	    Zeitpunkt passieren in dem der erste Schreiber nicht vollständig ge-
+	    schrieben hatte. Der erste Schreiber bekommt dann eine Fehlermeldung,
+	    dass nicht alle Daten geschrieben werden konnten (wenn es gut läuft)
+	    und die Datenbank ist in jedem Fall korrumpiert, weil ein unvoll-
+	    ständiger Datensatz enthalten ist.
+
+	Datenbank nicht vorhanden:
+	  - ein Schreiber löscht einen alten Datenbestand
+	  - ein Leser möchte zugreifen und bekommt die Fehlermeldung, dass die
+	    Datenbank nicht vorhanden ist
+	  - Konflikt: Da der Schreiber die Datei in eine temporäre Datei 
+	    umbenannt hatte, ist die eigentliche Datendatei für den Leser nicht
+	    auffindbar, solange der Schreiber aktiv ist. 
+
+A7.1 c) siehe fisch.c dijkstra.c fisch.h dijkstra.h und Makefile (wir haben
+        unsere vorherige Lösung als Grundlage genommen)

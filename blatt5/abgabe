@@ -1,0 +1,210 @@
+################################################################################
+#
+#	Tino Landmann, Sören Kröll, Christian Caspers, David Gens
+#	Prof. Kaiser - BSRA - Gruppe A - Blatt 5
+#
+################################################################################
+
+
+A5.1 (<assert.h>):
+(a) In <assert.h> wird (falls die Konstante NDEBUG nicht existiert) der 
+    assert-makro wie folgt definiert:
+
+    # define assert(expr)						\
+      ((expr)								\
+      ? __ASSERT_VOID_CAST (0)						\
+      : __assert_fail (__STRING(expr), __FILE__, __LINE__, __ASSERT_FUNCTION))
+
+    Falls also (expr) zu wahr (d.h. != 0) evaluiert, wird __ASSERT_VOID_CAST (0)
+    ausgeführt. __ASSERT_VOID_CAST ist ein weiterer Makro, der (0) auf void
+    castet. Dies resultiert in der vom Präprozessor generierten Zeile
+
+      (void)0;
+
+    was ein gültiges, aber nutzloses C-Statement darstellt (der void-Cast ist an
+    der Stelle wichtig, um z.b. vor Zuweisungen mit __ASSERT_VOID_CAST (0) zu
+    schützen, welche dann fehl schlagen).
+
+    Falls aber (expr) zu falsch (d.h. == 0) evaluiert, wird eine der Funktionen
+    __assert_fail oder __assert_perror_fail (oben nur für __assert_fail 
+    angegeben) aufgerufen, welche expr als String, die aktuelle Datei und Zeile
+    (__FILE__ und __LINE__ werden vom Präprozessor ersetzt) und die aufrufende
+    Funktion auf die Standardausgabe schreiben und das Programm dann anhalten.
+
+(b) Weil die Anweisung i++ ein Seiteneffekt der Variablen i ist. Diese Art der
+    Verwendung kann Fehler verursachen, die verschwinden, sobald NDEBUG nicht
+    definiert ist (im MANPAGE »Heisenbugs« genannt), weil dann öfter hochgezählt
+    wird, als mit NDEBUG.
+
+(c) siehe auch assert-demo.c
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <assert.h>
+
+    int main(int argc, char *argv[])
+    {
+        if (argc != 2)
+       {
+          printf("usage: ./assert-demo <number>\n");
+	  return 1;
+       }
+
+       /* should always be true */
+       assert(atoi(argv[1]) - atoi(argv[1]) == 0);
+       printf("indeed %s - %s == 0 !\n",argv[1],argv[1]);
+
+       /* should always be false */
+       assert(atoi(argv[1]) - (atoi(argv[1])-1) == 0);
+       printf("wow    %s - %d == 0 !\n",argv[1],atoi(argv[1])-1);
+       printf("Try compiling without -DNDEBUG..\n");
+
+       return 0;
+    }
+
+(d) oberer Teil siehe assert-demo.i
+    ...
+    
+    # 4 "assert-demo.c" 2
+
+   int main(int argc, char *argv[])
+   {
+	if (argc != 2)
+	{
+	    printf("usage: ./assert-demo <number>\n");
+	    return 1;
+	}
+
+
+	((atoi(argv[1]) - atoi(argv[1]) == 0) ? (void) (0) : __assert_fail \
+	  ("atoi(argv[1]) - atoi(argv[1]) == 0", "assert-demo.c", 14, \
+	  __PRETTY_FUNCTION__));
+	printf("indeed %s - %s == 0 !\n",argv[1],argv[1]);
+
+
+	((atoi(argv[1]) - (atoi(argv[1])-1) == 0) ? (void) (0) : __assert_fail \
+	  ("atoi(argv[1]) - (atoi(argv[1])-1) == 0", "assert-demo.c", 18, \
+	  __PRETTY_FUNCTION__));
+	printf("wow    %s - %d == 0 !\n",argv[1],atoi(argv[1])-1);
+	printf("Try compiling without -DNDEBUG..\n");
+
+	return 0;
+   }
+
+(e) Es gibt zwei Assertions, die erste sollte immer gelten, die zweite nie.
+    Ohne das Compilerflag -DNDEBUG (welches den Makro NDEBUG definiert) bricht
+    das Programm kurz nach der ersten Assertion mit folgender Ausgabe ab:
+
+    >$ ./assert-demo 11
+    indeed 11 - 11 == 0 !
+    assert-demo: assert-demo.c:18: main: Assertion `atoi(argv[1]) - \
+      (atoi(argv[1])-1) == 0' failed.
+    Aborted
+
+    Mit gesetztem -DNDEBUG Flag hingegen lautet die Ausgabe:
+
+    >$ ./assert-demo 11
+    indeed 11 - 11 == 0 !
+    wow    11 - 10 == 0 !
+    Try compiling without -DNDEBUG..
+
+
+A5.2 (setjmp() / longjmp()):
+(a) siehe auch setjmp-demo.c
+
+    #include <stdio.h>
+    #include <setjmp.h>
+
+    static jmp_buf main_context;
+    static const int rek_depth = 5;
+
+    void rek(int i)
+    {
+	if (rek_depth < ++i)
+	    longjmp(main_context, 1);
+	printf("Rekursionstiefe %d von %d\n", i, rek_depth);
+	rek(i);
+    }
+
+    int main(void)
+    {
+	if (!setjmp(main_context))
+	    rek(0);
+	printf("Rekursion beendet.\n");
+	return 0;
+    }
+
+(b) Einzige lokale Variable der Funktion rek ist ihr Parameter i. Zu Beginn wird
+    rek(0) aus der main Funktion heraus aufgerufen:
+
+    (gdb) info frame
+    Stack level 5, frame at 0x7fffffffe5e0:
+     rip = 0x400642 in main (setjmp-demo.c:18); saved rip 0x7ffff7a5c30d
+     caller of frame at 0x7fffffffe5d0
+     source language c.
+     Arglist at 0x7fffffffe5d0, args: 
+     Locals at 0x7fffffffe5d0, Previous frame's sp is 0x7fffffffe5e0
+     Saved registers:
+      rbp at 0x7fffffffe5d0, rip at 0x7fffffffe5d8
+
+    Der Prozessor legt dann einen Stackframe für den Aufruf der Funktion rek an:
+
+    (gdb) info frame
+    Stack level 4, frame at 0x7fffffffe5d0:
+     rip = 0x400624 in rek (setjmp-demo.c:12); saved rip 0x400642
+     called by frame at 0x7fffffffe5e0, caller of frame at 0x7fffffffe5b0
+     source language c.
+     Arglist at 0x7fffffffe5c0, args: i=1
+     Locals at 0x7fffffffe5c0, Previous frame's sp is 0x7fffffffe5d0
+     Saved registers:
+      rbp at 0x7fffffffe5c0, rip at 0x7fffffffe5c8
+
+    In Zeile 12 wird dann rek(1) aus rek(0) heraus aufgerufen und der Prozessor
+    legt einen weiteren Stackframe an:
+
+    (gdb) info frame
+    Stack level 3, frame at 0x7fffffffe5b0:
+     rip = 0x400624 in rek (setjmp-demo.c:12); saved rip 0x400624
+     called by frame at 0x7fffffffe5d0, caller of frame at 0x7fffffffe590
+     source language c.
+     Arglist at 0x7fffffffe5a0, args: i=2
+     Locals at 0x7fffffffe5a0, Previous frame's sp is 0x7fffffffe5b0
+     Saved registers:
+      rbp at 0x7fffffffe5a0, rip at 0x7fffffffe5a8
+
+    Ruft man die Adresse der lokalen Variablen i im jeweiligen Stackframe ab, 
+    so wird klar, dass diese immer wieder neu angelegt wird und zum jeweiligen
+    Kontext gehört:
+
+    < Stack level 4 (geht von e5d0 bis e5b1) >
+    (gdb) p &i
+    $1 = (int *) 0x7fffffffe5bc
+
+    < Stack level 3 (geht von e5b0 bis e591) >
+    (gdb) p &i
+    $2 = (int *) 0x7fffffffe59c
+
+A5.3 (Adressräume):
+(a) In der Funktion memprobe wird ein void Zeiger auf einen char Zeiger gecastet
+    und dann dereferenziert. Falls das funktioniert, wird der return Wert auf 1
+    gesetzt. Anschließend wird auf den Zeiger schreibend zugegriffen. Klappt
+    auch das, wird der return Wert auf 2 gesetzt und die Funktion kehrt zum 
+    Aufrufer zurück.
+
+    Normalerweise wird vom System, sobald ein unbefugter Zugriff auf eine
+    Speicheradresse registriert wird ein Fault ausgelöst. Die Funktion memprobe
+    greift hier mittels handle_sig in diesen Ablauf ein und fängt den Fault ab.
+
+    Dafür wird der Prozesskontext vor dem Dereferenzieren und Schreiben einmal
+    mit setjmp gesichert, um dann im Falle eines Fault wieder hergestellt
+    zu werden. Somit kann jede Operation einmal getestet und ein
+    aussagekräftiges Ergebnis zurückgeliefert werden.
+
+(b) siehe memprobe.c
+
+A5.4 (Benutzeradressraum):
+(a) siehe memprobe1.c
+
+(b) Die als Zeiger deklarierte Variable liegt im Heap, wärend die als Array 
+    deklarierte Variable im Stackbereich liegt. Allein die Stackvariable ist
+    zur Laufzeit veränderbar, der String im Heap ist nicht veränderbar.

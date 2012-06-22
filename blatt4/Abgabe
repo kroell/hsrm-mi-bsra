@@ -1,0 +1,160 @@
+################################################################################
+#
+#	Tino Landmann, Sören Kröll, Christian Caspers, David Gens
+#	Prof. Kaiser - BSRA - Gruppe A - Blatt 4
+#
+################################################################################
+
+A4.1)   Einstufiger Cache
+        T-miss: 8ns (Zugriff auf Hauptspeicher)
+        T-hit : 1ns (Zugriff auf Cache)
+        Hitrate: 70%
+        
+        => T-eff = 0,7*1 + (1-0,7)*8 = 0,7 + 0,3*8 = 3,1
+
+A4.2)	Im Folgenden werden Caches verschiedener Organisationsformen betrachtet.
+		Für alle Beispiele gilt:
+			- 32 Adressbits
+			- Cache-Größe: 65536 Byte (64KB)
+			- Cache-Zeilengröße: 256 Byte
+		Bei einem vollassoziativen, direkt abbildenden oder zweifach assoziativen
+		Cache werde jeweils auf ein 32-Bit-Wort unter der Speicheradresse 
+		0x002A2564 zugegriffen. Für alle drei Fälle soll beantwortet werden:
+
+		(a) Auf welche Cache-Zeile wird zugegriffen?
+		(b) Wie lautet der beim Vergleich benutzte Tag?
+		(c) Wo in der Cache-Zeile steht das adressierte 32-Bit-Wort?
+				
+		Vollassoziativer Cache
+            Tag:    002A25
+            Offset: 64 = 100 zur Basis 10
+            Zeile:  Zeile ist unbekannt, und abhängig davon was sonst noch im
+                    Cache gespeichert ist. Es existiert kein Zusammenhang zwischen
+                    der Adresse des Objekts und der Position der Chache-Kopie
+                    
+        Direkt abbildender Cace
+            Tag:    002A
+            Zeile:  25 = 37 zur Basis 10
+            Offset: 100 zur Basis 10
+            
+        Zweifach assoziativ
+            Tag:    002A
+            Satz:   25 = 37 zur Basis 10
+            Zeile:  74 oder 75 bzw Zeile 0 oder 1 des Satzes
+            Offset: 100 zur Basis 10
+
+A4.3)
+		Der direkt abbildende Cache aus Aufg. 4.2 werde als L1 Datencache benutzt.
+		Wie groß sind die Trefferraten im Cache, wenn das Programm in einer 
+		Schleife mehrfach einen zusammenhängenden Speicherbereich von
+
+		(a) 32767 Byte (32KB)
+		(b) 65535 Byte (64KB)
+		(c) 131072 Byte (128KB)
+		
+		zu a)   Im ersten Durchlauf 0% Trefferquote, danach 100% weil Programm
+		        vollständig in Cache passt
+        
+        zu b)   Wie a)
+        
+        zu c)   Im schlechtesten Fall 0% Trefferquote, weil Cache zu klein für
+                für den angesprochenen Speicherbereich ist
+
+A4.4)
+		Der vollassoziative Cache aus Aufg. 4.2 werde als L1 Befehlscache benutzt. 
+		Ein Programm adressiert in einer Schleife mehrfach einen zusammenhängenden 
+		Codebereich von 81920 Bytes im Hauptspeicher. Wie groß sind die 
+		Trefferraten im Cache ab dem zweiten Durchgang, wenn dieser mit . . .
+
+		(a) . . . der LRU-Ersetzungsstrategie
+		(b) . . . der LFU-Ersetzungsstrategie
+		(c) . . . der FIFO-Ersetzungsstrategie
+		(d) . . . der Random-Ersetzungsstrategie
+		
+		arbeitet?
+		
+		zu a)   Least Recently Used
+		        0% Hit, weil der Cache immer überschrieben wird
+	        
+	    zu b)   Least Frequently Used
+	            Keine Aussage möglich, Zählerstände für gecachte Werte sind alle
+	            gleich, unklar welches dann überschrieben wird.
+	            
+	    zu c)   FIFO
+	            Wie LRU 
+	            
+	    zu d)   Im besten Fall 80%: 65535 / 81920 = 0.8
+	            Schlechtester Fall: 0%; wie LRU 
+­­
+A4.5a)
+		Ein Programm greift in einer Schleife mehrfach auf die unten aufgeführten
+		32-Bit-Adressen zu. Wie sind die Trefferraten ab dem zweiten 
+		Schleifendurchlauf bei Verwendung folgender Caches:
+
+		vollassoziativer Cache mit 64 Zeilen à 16 Byte
+		-----------------------------------------------------------------------
+		  Adresse			1. Lauf			2. Lauf			n. Lauf
+		-----------------------------------------------------------------------
+		0x00002091  
+		0x00005492  
+		0x00002093  
+		0x00005494  
+		0x0000109A  
+		0x0000F49B  
+		0x0000109C  
+		0x0000F49D  
+		-----------------------------------------------------------------------
+
+
+	b)	direkt abbildender Cache mit 64 Zeilen à 16 Byte
+		-----------------------------------------------------------------------
+		  Adresse			1. Lauf			2. Lauf			n. Lauf
+		-----------------------------------------------------------------------
+		0x00002091  
+		0x00005492  
+		0x00002093  
+		0x00005494  
+		0x0000109A  
+		0x0000F49B  
+		0x0000109C  
+		0x0000F49D  
+		-----------------------------------------------------------------------
+
+	c)	zweifach assoziativer Cache mit 32 Sätzen zu je 2 Zeilen à 16 Byte
+		-----------------------------------------------------------------------
+		  Adresse			1. Lauf			2. Lauf			n. Lauf
+		-----------------------------------------------------------------------
+		0x00002091  
+		0x00005492  
+		0x00002093  
+		0x00005494  
+		0x0000109A  
+		0x0000F49B  
+		0x0000109C  
+		0x0000F49D  
+		-----------------------------------------------------------------------
+
+
+	d)	vierfach assoziativer Cache mit 16 Sätzen zu je 4 Zeilen à 16 Byte
+		-----------------------------------------------------------------------
+		  Adresse			1. Lauf			2. Lauf			n. Lauf
+		-----------------------------------------------------------------------
+		0x00002091  
+		0x00005492  
+		0x00002093  
+		0x00005494  
+		0x0000109A  
+		0x0000F49B  
+		0x0000109C  
+		0x0000F49D  
+		-----------------------------------------------------------------------
+
+	e)	Wie groß sind die Kapazitäten dieser Caches?
+
+		
+Hinweis: Die Aufgaben 4.3 bis 4.5 können allein nach der „Methode des 
+		 scharfen Hinsehens“ gelöst werden. Alternativ gibt es auch die Möglichkeit,
+		 ein Programm zur Simulation des Cache-Verhaltens zu schreiben und sich die
+		 Lösungen von diesem Programm ermitteln zu lassen. Ein Muster eines solchen
+		 Programmes (in dem allerdings die zentrale Simulationsfunktion noch fehlt)
+		findet sich auf der Webseite der Veranstaltung.
